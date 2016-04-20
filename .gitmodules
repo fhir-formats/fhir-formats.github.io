@@ -1,3 +1,6 @@
 [submodule "lua.vm.js"]
 	path = lua.vm.js
 	url = https://github.com/kripken/lua.vm.js.git
+[submodule "fhir-formats"]
+	path = fhir-formats
+	url = https://github.com/vadi2/fhir-formats.git
