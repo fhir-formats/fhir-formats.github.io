@@ -1,8 +1,17 @@
+/*patch the drawer hambuger to vertically-align to centre*/
+.mdl-layout__drawer-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*seems like to good idea not to have them show while CodeMirror is loading*/
 textarea {
   border: none;
   background-color: transparent;
   resize: none;
 }
+
 .fhir-input {
   /*width: 50%;*/
   height: calc(100% - 195px);
