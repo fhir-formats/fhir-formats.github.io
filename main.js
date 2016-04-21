@@ -51,25 +51,36 @@ function FhirInputView(el) {
 
   function convertData() {
     var mode = codemirror.getOption("mode");
-    try {
+    // try {
       var convertFunction = mode == "xml" ? "in_fhir_json" : "in_fhir_xml";
-      var result = L.execute("return " + convertFunction + "([[" + codemirror.getValue() + "]], {pretty = true})");
+      // var result = L.execute("return " + convertFunction + "([[" + codemirror.getValue() + "]], {pretty = true})");
+      var result = runLuaSafe(convertFunction + "([[" + codemirror.getValue() + "]], {pretty = true})");
       /* can't pass which codemirror to send data to with callbacks, so figure it out here */
       var receivingView = leftFhirView.codemirror === codemirror ? rightFhirView : leftFhirView;
       receivingView.setText(result.join(), true);
-    } catch (e) {
-      console.log(e.toString());
-    }
+    // } catch (e) {
+    //   console.log(e.toString());
+    // }
   }
 
   var self = this;
+}
+
+function runLuaSafe(code) {
+  var results = L.execute("return xpcall(function() return "+code+" end, function(e) return e..[[\n]]..debug.traceback() end)");
+  if (results[0] === false) {
+    console.log(code + '\n' + results.slice(1).join());
+  } else {
+    // ignore the first status code, return the rest of result
+    return results.slice(1);
+  }
 }
 
 var leftFhirView = new FhirInputView(document.getElementById('fhir-input-left'));
 var rightFhirView = new FhirInputView(document.getElementById('fhir-input-right'));
 
 document.getElementById('skeleton-patient__link').onclick = function () {
-  rightFhirView.setText("{\n  \"resourceType\": \"Patient\",\n  \"identifier\": [\n    {\n      \"use\": \"usual\",\n      \"type\": {\n        \"coding\": [\n          {\n            \"code\": \"MR\",\n            \"system\": \"http://hl7.org/fhir/v2/0203\"\n          }\n        ]\n      }\n    }\n  ],\n  \"id\": \"example\"\n}");
+  leftFhirView.setText("<Patient xmlns='http://hl7.org/fhir'>\n  <identifier>\n    <type>\n      <coding>\n        <system value='http://hl7.org/fhir/v2/0203'/>\n        <code value='MR'/>\n      </coding>\n    </type>\n    <use value='usual'/>\n  </identifier>\n  <id value='example'/>\n</Patient>");
   document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
 }
 
