@@ -1,0 +1,15 @@
+textarea {
+  border: none;
+  background-color: transparent;
+  resize: none;
+}
+.fhir-input {
+  /*width: 50%;*/
+  height: calc(100% - 195px);
+  box-sizing: border-box;
+  /*display: inline-block;*/
+}
+
+.fhir-input .CodeMirror {
+  height: 100%;
+}

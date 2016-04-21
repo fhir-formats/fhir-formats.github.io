@@ -53,7 +53,7 @@ function FhirInputView(el) {
     var mode = codemirror.getOption("mode");
     try {
       var convertFunction = mode == "xml" ? "in_fhir_json" : "in_fhir_xml";
-      var result = L.execute("return " + convertFunction + "[[" + codemirror.getValue() + "]]");
+      var result = L.execute("return " + convertFunction + "([[" + codemirror.getValue() + "]], {pretty = true})");
       /* can't pass which codemirror to send data to with callbacks, so figure it out here */
       var receivingView = leftFhirView.codemirror === codemirror ? rightFhirView : leftFhirView;
       receivingView.setText(result.join(), true);
@@ -69,7 +69,7 @@ var leftFhirView = new FhirInputView(document.getElementById('fhir-input-left'))
 var rightFhirView = new FhirInputView(document.getElementById('fhir-input-right'));
 
 document.getElementById('skeleton-patient__link').onclick = function () {
-  rightFhirView.setText('{"id":"example","resourceType":"Patient","identifier":[{"use":"usual","type":{"coding":[{"system":"http://hl7.org/fhir/v2/0203","code":"MR"}]}}]}');
+  rightFhirView.setText("{\n  \"resourceType\": \"Patient\",\n  \"identifier\": [\n    {\n      \"use\": \"usual\",\n      \"type\": {\n        \"coding\": [\n          {\n            \"code\": \"MR\",\n            \"system\": \"http://hl7.org/fhir/v2/0203\"\n          }\n        ]\n      }\n    }\n  ],\n  \"id\": \"example\"\n}");
   document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
 }
 
