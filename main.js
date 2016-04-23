@@ -6,11 +6,7 @@ function FhirInputView(el) {
       json: true,
     },
     lineNumbers: true,
-    lineWrapping: true,
-    matchBrackets: false,
-/*      matchTags: {
-      bothTags: true
-    }, */
+    lineWrapping: true
   });
 
   codemirror.on("change", function() {
@@ -43,9 +39,11 @@ function FhirInputView(el) {
     convertData();
   }
 
-  /* updates data of codemirror as well as the cache */
+  /* updates data of codemirror as well as the cache, while keeping scroll position */
   function setText(text, checkMode) {
+    var scrollInfo = codemirror.getScrollInfo();
     codemirror.setValue(text);
+    codemirror.scrollTo(scrollInfo.left, scrollInfo.top);
     oldValue = text;
 
     if (checkMode) {
