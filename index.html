@@ -1,6 +1,11 @@
 <html>
 
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="A tool to convert HL7 FHIR resources between the XML and JSON formats.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>Your FHIR in XML or JSON</title>
   <!-- Material Design Lite -->
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.red-deep_orange.min.css" />
   <!-- Material Design icon font -->
@@ -11,7 +16,6 @@
 
   <!-- dialog polyfill requires js and css in header -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.3/dialog-polyfill.min.js"></script>
-  <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.3/dialog-polyfill.min.css"></link>
 </head>
 
@@ -90,7 +94,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.14.2/mode/javascript/javascript.min.js"></script>
   <!-- lua.vm.js -->
   <script src="https://fhir-formats.github.io/lua.vm.js/dist/lua.vm.js"></script>
-  <!-- fhir-formats -->
+  <!-- fhir-formats -->  
+  <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
   <script type="text/lua">
     -- has to be a global
     in_fhir_json = require("https://fhir-formats.github.io/fhir-formats/src/fhirformats.web.lua").to_json
