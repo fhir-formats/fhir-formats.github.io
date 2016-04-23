@@ -98,16 +98,28 @@ document.getElementById('skeleton-patient__link').onclick = function () {
     leftFhirView.setText(xml);
   document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
 }
-
-// hook up 'Credit' link in footer to display a dialog
-var dialog = document.querySelector('dialog');
-var showDialogButton = document.querySelector('#credit');
-if (!dialog.showModal) {
-  dialogPolyfill.registerDialog(dialog);
+  document.getElementById('sample-diagnosticreport__link').onclick = function () {
+    var xml = runLuaSafe("in_fhir_xml[[{\"subject\":{\"reference\":\"Patient\/f201\",\"display\":\"Roel\"},\"id\":\"f201\",\"issued\":\"2012-12-01T12:00:00+01:00\",\"resourceType\":\"DiagnosticReport\",\"text\":{\"div\":\"<div xmlns='http:\/\/www.w3.org\/1999\/xhtml'>\\n  <p>\\n    <b>Generated Narrative with Details<\/b>\\n  <\/p>\\n  <p>\\n    <b>id<\/b>: f201<\/p>\\n  <p>\\n    <b>status<\/b>: final<\/p>\\n  <p>\\n    <b>category<\/b>: Radiology<span>(Details : {SNOMED CT code &apos;394914008&apos; = &apos;Radiology - specialty (qualifier value)&apos;, given\\n           as &apos;Radiology&apos;}; {http:\/\/hl7.org\/fhir\/v2\/0074 code &apos;RAD&apos; = &apos;Radiology)<\/span>\\n  <\/p>\\n  <p>\\n    <b>code<\/b>: CT of head-neck<span>(Details : {SNOMED CT code &apos;429858000&apos; = &apos;Computed tomography of head and neck (procedure)&apos;,\\n           given as &apos;Computed tomography (CT) of head and neck&apos;})<\/span>\\n  <\/p>\\n  <p>\\n    <b>subject<\/b>:<a>Roel<\/a>\\n  <\/p>\\n  <p>\\n    <b>effective<\/b>: Dec 1, 2012 12:00:00 PM<\/p>\\n  <p>\\n    <b>issued<\/b>: Dec 1, 2012 12:00:00 PM<\/p>\\n  <p>\\n    <b>performer<\/b>:<a>Blijdorp MC<\/a>\\n  <\/p>\\n  <p>\\n    <b>imagingStudy<\/b>: HEAD and NECK CT DICOM imaging study<\/p>\\n  <p>\\n    <b>conclusion<\/b>: CT brains: large tumor sphenoid\/clivus.<\/p>\\n  <p>\\n    <b>codedDiagnosis<\/b>: Malignant tumor of craniopharyngeal duct<span>(Details : {SNOMED CT code &apos;188340000&apos; = &apos;Malignant tumor of craniopharyngeal duct (disorder)&apos;,\\n           given as &apos;Malignant tumor of craniopharyngeal duct&apos;})<\/span>\\n  <\/p>\\n<\/div>\",\"status\":\"generated\"},\"imagingStudy\":[{\"display\":\"HEAD and NECK CT DICOM imaging study\"}],\"performer\":{\"reference\":\"Organization\/f203\",\"display\":\"Blijdorp MC\"},\"code\":{\"coding\":[{\"display\":\"Computed tomography (CT) of head and neck\",\"system\":\"http:\/\/snomed.info\/sct\",\"code\":\"429858000\"}],\"text\":\"CT of head-neck\"},\"effectiveDateTime\":\"2012-12-01T12:00:00+01:00\",\"codedDiagnosis\":[{\"coding\":[{\"display\":\"Malignant tumor of craniopharyngeal duct\",\"system\":\"http:\/\/snomed.info\/sct\",\"code\":\"188340000\"}]}],\"status\":\"final\",\"category\":{\"coding\":[{\"display\":\"Radiology\",\"system\":\"http:\/\/snomed.info\/sct\",\"code\":\"394914008\"},{\"code\":\"RAD\",\"system\":\"http:\/\/hl7.org\/fhir\/v2\/0074\"}]},\"conclusion\":\"CT brains: large tumor sphenoid\/clivus.\"}]]").join();
+    leftFhirView.setText(xml);
+  document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
 }
-showDialogButton.addEventListener('click', function() {
-  dialog.showModal();
-});
-dialog.querySelector('.close').addEventListener('click', function() {
-  dialog.close();
-});
+
+function linkToDialog(dialogQuery, linkQuery) {
+  var dialog = document.querySelector(dialogQuery);
+  var showDialogButton = document.querySelector(linkQuery);
+  if (!dialog.showModal) {
+    dialogPolyfill.registerDialog(dialog);
+  }
+  showDialogButton.addEventListener('click', function() {
+    dialog.showModal();
+    dialog.scrollTop = 0;
+  });
+  dialog.querySelector('.close').addEventListener('click', function() {
+    dialog.close();
+  });
+}
+
+// hook up 'Credits' link in footer to display a dialog
+linkToDialog('#credits-dialog', '#credits');
+// same for Privacy & Terms
+linkToDialog('#privacy-and-terms-dialog', '#privacy-and-terms');

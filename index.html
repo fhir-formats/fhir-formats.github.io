@@ -42,6 +42,7 @@
       <nav class="mdl-navigation">
         <a class="mdl-navigation__link" href="#" id="skeleton-patient__link">Skeleton patient</a>
         <a class="mdl-navigation__link" href="#" id="full-patient__link">Full patient</a>
+        <a class="mdl-navigation__link" href="#" id="sample-diagnosticreport__link">Sample DiagnosticReport</a>
       </nav>
     </div>
 
@@ -62,8 +63,8 @@
       <div class="mdl-mini-footer__left-section">
         <ul class="mdl-mini-footer__link-list">
           <li><a href="#">Help</a></li>
-          <li><a href="#">Privacy &amp; Terms</a></li>
-          <li><a href="#" id="credit">Credits</a></li>
+          <li><a href="#" id="privacy-and-terms">Privacy &amp; Terms</a></li>
+          <li><a href="#" id="credits">Credits</a></li>
           <li><a href="https://github.com/fhir-formats/fhir-formats.github.io" title="This website is open-source">Source</a></li>
         </ul>
       </div>
@@ -76,25 +77,52 @@
     </footer>
   </div>
 
-  <dialog class="mdl-dialog">
-  <h4 class="mdl-dialog__title">Credits</h4>
-  <div class="mdl-dialog__content">
-    <p><a href="https://getmdl.io/">Material Design Lite</a> by Google</p>
-    <p><a href="https://kripken.github.io/lua.vm.js/lua.vm.js.html">lua.vm.js</a> by Alon Zakai</p>
-    <p><a href="https://codemirror.net/">CodeMirror</a> by Marijn Haverbeke</p>
-    <p><a href="https://github.com/vadi2/fhir-formats">FHIR Formats</a> by Vadim Peretokin</p>
-  </div>
-  <div class="mdl-dialog__actions">
-    <button type="button" class="mdl-button close">Close</button>
-  </div>
-</dialog>
+  <dialog class="mdl-dialog" id="credits-dialog">
+    <h4 class="mdl-dialog__title">Credits</h4>
+    <div class="mdl-dialog__content">
+      <p><a href="https://getmdl.io/">Material Design Lite</a> by Google</p>
+      <p><a href="https://kripken.github.io/lua.vm.js/lua.vm.js.html">lua.vm.js</a> by Alon Zakai</p>
+      <p><a href="https://codemirror.net/">CodeMirror</a> by Marijn Haverbeke</p>
+      <p><a href="https://github.com/vadi2/fhir-formats">FHIR Formats</a> by Vadim Peretokin</p>
+      <p>FHIR examples are from the FHIR specification</p>
+    </div>
+    <div class="mdl-dialog__actions">
+      <button type="button" class="mdl-button close">Close</button>
+    </div>
+  </dialog>
+
+  <dialog class="mdl-dialog" id="privacy-and-terms-dialog">
+    <h4 class="mdl-dialog__title">Privacy &amp; Terms</h4>
+    <div class="mdl-dialog__content">
+      <p>Your privacy is critically important to us. At FHIR Formats we have one fundamental principle:</p>
+      <ol><li>We don't ask you for personal information at all.</li></ol>
+
+      <p>Below is our privacy policy which incorporates these goals:</p>
+
+      <h5>Website Visitors</h5>
+      <p>Like most website operators, FHIR Formats collects non-personally-identifying information of the sort that web browsers and servers typically make available, such as the browser type, language preference, referring site, and the date and time of each visitor request. FHIR Formats's purpose in collecting non-personally identifying information is to better understand how FHIR Formats's visitors use its website. From time to time, FHIR Formats may release non-personally-identifying information in the aggregate, e.g., by publishing a report on trends in the usage of its website.</p>
+
+      <h5>Cookies</h5>
+      <p>A cookie is a string of information that a website stores on a visitor's computer, and that the visitor's browser provides to the website each time the visitor returns. Google Analytics, a web analysis service provided by Google, is employed on this website. Google utilizes the data collected to track and examine the use of fhir-formats.github.io, to prepare reports on its activities and share them with other Google services.
+      <p>Google may use the data collected to contextualize and personalize the ads of its own advertising network.</p>
+      <p>Personal data collected: Cookie and Usage Data. Place of processing: USA. Find Google's privacy policy <a href="https://www.google.com/policies/privacy/partners/" title="How Google uses data when you use our partners' sites or apps">here</a>.</p>
+
+      <h5>Privacy Policy Changes</h5>
+      <p>Although most changes are likely to be minor, FHIR Formats may change its Privacy Policy from time to time, and in FHIR Formats's sole discretion. FHIR Formats encourages visitors to frequently check this page for any changes to its Privacy Policy. Your continued use of this site after any change in this Privacy Policy will constitute your acceptance of such change.</p>
+
+
+    </div>
+    <div class="mdl-dialog__actions">
+      <button type="button" class="mdl-button close">Close</button>
+    </div>
+  </dialog>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/xml/xml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.14.2/mode/javascript/javascript.min.js"></script>
   <!-- lua.vm.js -->
   <script src="https://fhir-formats.github.io/lua.vm.js/dist/lua.vm.js"></script>
-  <!-- fhir-formats -->  
+  <!-- fhir-formats -->
   <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
   <script type="text/lua">
     -- has to be a global

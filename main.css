@@ -22,3 +22,9 @@ textarea {
 .fhir-input .CodeMirror {
   height: 100%;
 }
+
+#privacy-and-terms-dialog {
+    width: 50%;
+    overflow-y: scroll;
+    max-height: calc(100vh - 50px);
+}
