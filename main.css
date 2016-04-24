@@ -27,4 +27,9 @@ textarea {
     width: 50%;
     overflow-y: scroll;
     max-height: calc(100vh - 50px);
+    
+}
+#policy-footnote {
+  padding-top: 10px;
+  font-size: smaller;
 }
