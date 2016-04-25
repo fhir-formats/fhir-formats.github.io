@@ -24,11 +24,17 @@ textarea {
 }
 
 #privacy-and-terms-dialog {
-    width: 50%;
-    overflow-y: scroll;
-    max-height: calc(100vh - 50px);
-    
+  width: 50%;
+  overflow-y: scroll;
+  max-height: calc(100vh - 50px);
 }
+/*on smaller screens, expand the dialogs width*/
+@media(max-width: 600px) {
+  #privacy-and-terms-dialog {
+    width: 90%;
+  }
+}
+
 #policy-footnote {
   padding-top: 10px;
   font-size: smaller;
