@@ -123,3 +123,5 @@ function linkToDialog(dialogQuery, linkQuery) {
 linkToDialog('#credits-dialog', '#credits');
 // same for Privacy & Terms
 linkToDialog('#privacy-and-terms-dialog', '#privacy-and-terms');
+// and Help
+linkToDialog('#help-dialog', '#help');

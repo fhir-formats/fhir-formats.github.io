@@ -23,14 +23,14 @@ textarea {
   height: 100%;
 }
 
-#privacy-and-terms-dialog {
+#privacy-and-terms-dialog, #help-dialog {
   width: 50%;
   overflow-y: scroll;
   max-height: calc(100vh - 50px);
 }
 /*on smaller screens, expand the dialogs width*/
 @media(max-width: 600px) {
-  #privacy-and-terms-dialog {
+  #privacy-and-terms-dialog, #help-dialog {
     width: 90%;
   }
 }
