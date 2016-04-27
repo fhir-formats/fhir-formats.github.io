@@ -149,7 +149,11 @@
     <!-- fhir-formats -->
     <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
     <script type="text/lua">
-        -- has to be a global in_fhir_json = require("https://fhir-formats.github.io/fhir-formats/src/fhirformats.web.lua").to_json in_fhir_xml = require("https://fhir-formats.github.io/fhir-formats/src/fhirformats.web.lua").to_xml -- warm up FHIR resources cache in_fhir_xml'{}'
+        -- has to be a global 
+        in_fhir_json = require("https://fhir-formats.github.io/fhir-formats/src/fhirformats.web.lua").to_json
+        in_fhir_xml = require("https://fhir-formats.github.io/fhir-formats/src/fhirformats.web.lua").to_xml
+        -- warm up FHIR resources cache
+        in_fhir_xml'{}'
     </script>
     <script src="main.js" charset="utf-8"></script>
     <script>
