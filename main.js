@@ -1,21 +1,47 @@
+/*global CodeMirror, leftFhirView, rightFhirView, console, L, dialogPolyfill */
+
+function runLuaSafe(code) {
+  var results = L.execute("return xpcall(function() return "+code+" end, function(e) return e..[[\n]]..debug.traceback() end)");
+  if (results[0] === false) {
+    console.log(code + '\n' + results.slice(1).join());
+  } else {
+    // ignore the first status code, return the rest of result
+    return results.slice(1);
+  }
+}
+
 function FhirInputView(el) {
   this.el = el;
   var codemirror = this.codemirror = CodeMirror.fromTextArea(this.el, {
     mode: {
       name: "javascript",
-      json: true,
+      json: true
     },
     lineNumbers: true,
     lineWrapping: true
   });
 
-  codemirror.on("change", function() {
-    updateMode();
-  });
-
   /* JSON starts with { or [ */
   function looksLikeJson(code) {
-    return /^\s*[\{\[]/.test(code);
+    return (/^\s*[\{\[]/).test(code);
+  }
+    
+  function clearOtherView() {
+    var otherView = leftFhirView.codemirror === codemirror ? rightFhirView : leftFhirView;
+    otherView.setText("");
+  }
+    
+  function convertData() {
+    var mode = codemirror.getOption("mode");
+    // try {
+      var convertFunction = mode === "xml" ? "in_fhir_json" : "in_fhir_xml";
+      var result = runLuaSafe(convertFunction + "([[" + codemirror.getValue() + "]], {pretty = true})");
+      /* can't pass which codemirror to send data to with callbacks, so figure it out here */
+      var receivingView = leftFhirView.codemirror === codemirror ? rightFhirView : leftFhirView;
+      receivingView.setText(result.join(), true);
+    // } catch (e) {
+    //   console.log(e.toString());
+    // }
   }
 
   var oldValue = '';
@@ -52,36 +78,11 @@ function FhirInputView(el) {
   }
   this.setText = setText;
 
-  function convertData() {
-    var mode = codemirror.getOption("mode");
-    // try {
-      var convertFunction = mode == "xml" ? "in_fhir_json" : "in_fhir_xml";
-      // var result = L.execute("return " + convertFunction + "([[" + codemirror.getValue() + "]], {pretty = true})");
-      var result = runLuaSafe(convertFunction + "([[" + codemirror.getValue() + "]], {pretty = true})");
-      /* can't pass which codemirror to send data to with callbacks, so figure it out here */
-      var receivingView = leftFhirView.codemirror === codemirror ? rightFhirView : leftFhirView;
-      receivingView.setText(result.join(), true);
-    // } catch (e) {
-    //   console.log(e.toString());
-    // }
-  }
-
-  function clearOtherView() {
-    var otherView = leftFhirView.codemirror === codemirror ? rightFhirView : leftFhirView;
-    otherView.setText("");
-  }
+  codemirror.on("change", function () {
+    updateMode();
+  });    
 
   var self = this;
-}
-
-function runLuaSafe(code) {
-  var results = L.execute("return xpcall(function() return "+code+" end, function(e) return e..[[\n]]..debug.traceback() end)");
-  if (results[0] === false) {
-    console.log(code + '\n' + results.slice(1).join());
-  } else {
-    // ignore the first status code, return the rest of result
-    return results.slice(1);
-  }
 }
 
 var leftFhirView = new FhirInputView(document.getElementById('fhir-input-left'));
