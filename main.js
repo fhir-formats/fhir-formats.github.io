@@ -1,5 +1,49 @@
-/*global CodeMirror, leftFhirView, rightFhirView, console, L, dialogPolyfill */
+/*global CodeMirror, leftFhirView, rightFhirView, console, L, dialogPolyfill, $, Promise */
 
+/* handle uploading of resources */
+function decode(data) {
+	return JSON.parse(data);
+}
+
+function encode(data) {
+	return JSON.stringify(data);
+}
+
+/* uploads a resource to the given server and runs the callback function when done */
+function upload(serverUrl, resource, successfulCallback, failCallback) {
+    console.log("upload successfulCallback: ", successfulCallback);
+    console.log("upload failCallback: ", failCallback);
+	return $.ajax({
+		url: serverUrl,
+		method: "POST",
+		type: "POST",
+		contentType: "application/json",
+		data: encode(resource),
+		headers: {
+            Accept: "application/json; charset=utf-8",
+            Prefer: "return=minimal"
+        }
+	});
+}
+
+function validate(endpoint, resource) {
+    var parameters = {
+        "resourceType": "Parameters",
+        "parameter": [{
+            "name": "resource",
+            "resource": resource            
+        }]        
+    };
+     
+    return new Promise(function (resolve, reject) {
+        console.log("Made new promise, resolve function is: ", resolve);
+        console.log("Made new promise, reject function is: ", reject);
+        upload(endpoint + '/' + resource.resourceType + "/$validate", parameters)
+            .done(resolve).fail(reject);
+    });
+}
+
+/* runs Lua code */
 function runLuaSafe(code) {
   var results = L.execute("return xpcall(function() return "+code+" end, function(e) return e..[[\n]]..debug.traceback() end)");
   if (results[0] === false) {
@@ -10,6 +54,7 @@ function runLuaSafe(code) {
   }
 }
 
+/* defines and hooks up functions the left and right code areas */
 function FhirInputView(el) {
   this.el = el;
   var codemirror = this.codemirror = CodeMirror.fromTextArea(this.el, {
@@ -77,6 +122,11 @@ function FhirInputView(el) {
     }
   }
   this.setText = setText;
+    
+    function getValue() {
+        return codemirror.getValue();
+    }
+    this.getValue = getValue;
 
   codemirror.on("change", function () {
     updateMode();
@@ -130,3 +180,16 @@ linkToDialog('#credits-dialog', '#credits');
 linkToDialog('#privacy-and-terms-dialog', '#privacy-and-terms');
 // and Help
 linkToDialog('#help-dialog', '#help');
+
+/* make validate buttons work */
+/* turn this into a property of the view!!! */
+document.getElementById('validate-left').onclick = function () {
+    // http://fhir3.healthintersections.com.au/open
+    // https://sqlonfhir-stu3.azurewebsites.net/fhir
+    validate("http://fhir3.healthintersections.com.au/open", decode(leftFhirView.getValue()))
+        .then(function(response) {
+            console.log("It worked! '", response, typeof(response), "'");
+        }, function(error) {
+            console.error("Failed validation!", error.stack);
+        });
+};
