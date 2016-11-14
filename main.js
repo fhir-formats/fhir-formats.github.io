@@ -9,6 +9,17 @@ function encode(data) {
 	return JSON.stringify(data);
 }
 
+/* credit: https://stackoverflow.com/questions/2631001/javascript-test-for-existence-of-nested-object-key */
+function checkNestedFast(obj /*, level1, level2, ... levelN*/ ) {
+	for (var i = 1; i < arguments.length; i++) {
+		if (!obj.hasOwnProperty(arguments[i])) {
+			return false;
+		}
+		obj = obj[arguments[i]];
+	}
+	return true;
+}
+
 /* uploads a JSON resource to the given server
    returns: jQuery ajax promise http://api.jquery.com/jquery.ajax */
 function upload(serverUrl, resource) {
@@ -181,15 +192,15 @@ linkToDialog('#help-dialog', '#help');
 document.getElementById('validate-left').onclick = function () {
     // http://fhir3.healthintersections.com.au/open
     // https://sqlonfhir-stu3.azurewebsites.net/fhir
-    validate("http://fhir3.healthintersections.com.au/open", decode(leftFhirView.getValue()))
+    validate("https://sqlonfhir-stu3.azurewebsites.net/fhir", decode(leftFhirView.getValue()))
         .done(function(data, textStatus, jqXHR) {
 			console.log("successful validation!", jqXHR);
 
-		var notification = document.querySelector('#validation-status-snackbar');
-		var data = {
-			message: S(jqXHR.responseJSON.text.div).stripTags().s
-		};
-		notification.MaterialSnackbar.showSnackbar(data);
+			var notification = document.querySelector('#validation-status-snackbar');
+			var data = {
+				message: S(checkNestedFast(jqXHR, 'responseJSON', 'text', 'div') ? jqXHR.responseJSON.text.div : "Validated OK").stripTags().s
+			};
+			notification.MaterialSnackbar.showSnackbar(data);
 
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.log("failed validation!", jqXHR);
