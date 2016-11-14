@@ -1,4 +1,4 @@
-/*global CodeMirror, leftFhirView, rightFhirView, console, L, dialogPolyfill, $, Promise */
+/*global CodeMirror, leftFhirView, rightFhirView, console, L, dialogPolyfill, $, Promise, S */
 
 /* handle uploading of resources */
 function decode(data) {
@@ -9,10 +9,9 @@ function encode(data) {
 	return JSON.stringify(data);
 }
 
-/* uploads a resource to the given server and runs the callback function when done */
-function upload(serverUrl, resource, successfulCallback, failCallback) {
-    console.log("upload successfulCallback: ", successfulCallback);
-    console.log("upload failCallback: ", failCallback);
+/* uploads a JSON resource to the given server
+   returns: jQuery ajax promise http://api.jquery.com/jquery.ajax */
+function upload(serverUrl, resource) {
 	return $.ajax({
 		url: serverUrl,
 		method: "POST",
@@ -20,27 +19,23 @@ function upload(serverUrl, resource, successfulCallback, failCallback) {
 		contentType: "application/json",
 		data: encode(resource),
 		headers: {
-            Accept: "application/json; charset=utf-8",
-            Prefer: "return=minimal"
+            Accept: "application/json; charset=utf-8"
         }
 	});
 }
 
+/* validates a JSON resource against the given endpoint
+   returns: jQuery ajax promise http://api.jquery.com/jquery.ajax */
 function validate(endpoint, resource) {
     var parameters = {
         "resourceType": "Parameters",
         "parameter": [{
             "name": "resource",
-            "resource": resource            
-        }]        
+            "resource": resource
+        }]
     };
      
-    return new Promise(function (resolve, reject) {
-        console.log("Made new promise, resolve function is: ", resolve);
-        console.log("Made new promise, reject function is: ", reject);
-        upload(endpoint + '/' + resource.resourceType + "/$validate", parameters)
-            .done(resolve).fail(reject);
-    });
+	return upload(endpoint + '/' + resource.resourceType + "/$validate", parameters);
 }
 
 /* runs Lua code */
@@ -187,9 +182,16 @@ document.getElementById('validate-left').onclick = function () {
     // http://fhir3.healthintersections.com.au/open
     // https://sqlonfhir-stu3.azurewebsites.net/fhir
     validate("http://fhir3.healthintersections.com.au/open", decode(leftFhirView.getValue()))
-        .then(function(response) {
-            console.log("It worked! '", response, typeof(response), "'");
-        }, function(error) {
-            console.error("Failed validation!", error.stack);
+        .done(function(data, textStatus, jqXHR) {
+			console.log("successful validation!", jqXHR);
+
+		var notification = document.querySelector('#validation-status-snackbar');
+		var data = {
+			message: S(jqXHR.responseJSON.text.div).stripTags().s
+		};
+		notification.MaterialSnackbar.showSnackbar(data);
+
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.log("failed validation!", jqXHR);
         });
 };
