@@ -171,7 +171,7 @@
             if (needToLoadResource()) {
                 let resourceURL = getResourceParam();
                 leftFhirView.pauseUpdates();
-                leftFhirView.codemirror.setValue("<!-- Loading resource from "+resourceURL+"... -->");
+                leftFhirView.codemirror.setValue("<!--\n\n  Loading resource from "+resourceURL+"... \n\n-->");
                 leftFhirView.unpauseUpdates();
                 leftFhirView.setRenderingMode("xml");
 
