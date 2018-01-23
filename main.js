@@ -149,3 +149,53 @@ linkToDialog('#credits-dialog', '#credits');
 linkToDialog('#privacy-and-terms-dialog', '#privacy-and-terms');
 // and Help
 linkToDialog('#help-dialog', '#help');
+
+
+function downloadResource(resourceURL) {
+  var request = new XMLHttpRequest();
+  request.open('GET', resourceURL+"?_format=json", true);
+
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+      var jsonResource = JSON.parse(request.responseText);
+      if (!jsonResource) {
+        console.log('Invalid JSON data received from '+resourceURL);
+        return;
+      }
+
+      /* strip out the big snapshot */
+      delete jsonResource.snapshot;
+
+      rightFhirView.setText(JSON.stringify(jsonResource));
+    }
+  };
+
+  request.onerror = function() {
+    console.log('Failed to download resource from: '+ resourceURL);
+  };
+
+  request.send();
+}
+
+function getResourceParam() {
+  let params = window.location.search
+    .substring(1)
+    .split("&")
+    .map(v => v.split("="))
+    .reduce((map, [key, value]) => map.set(key, decodeURIComponent(value)), new Map());
+  return params.get('loadResource');
+}
+
+function needToLoadResource() {
+  return getResourceParam() ? true : false;
+}
+
+// load a resource from a given URL param if present
+function loadResourceFromParams() {
+  let loadResource = getResourceParam();
+
+  if (!loadResource) { return; }
+
+  console.log("Need to load: "+ loadResource);
+  downloadResource(loadResource);
+}
