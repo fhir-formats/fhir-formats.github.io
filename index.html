@@ -165,8 +165,8 @@
     <!-- fhir-formats -->
     <script type="text/lua">
         -- has to be a global
-        in_fhir_json = require("https://fhir-formats.github.io/fhir-formats/src/fhirformats.web.lua").to_json
-        in_fhir_xml = require("https://fhir-formats.github.io/fhir-formats/src/fhirformats.web.lua").to_xml
+        in_fhir_json = require("https://raw.githubusercontent.com/vadi2/fhir-formats/reducece-web-size/src/fhirformats.web.lua").to_json
+        in_fhir_xml = require("https://raw.githubusercontent.com/vadi2/fhir-formats/reducece-web-size/src/fhirformats.web.lua").to_xml
         -- warm up FHIR resources cache
         in_fhir_xml'{}'
 
