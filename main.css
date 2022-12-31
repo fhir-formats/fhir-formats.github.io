@@ -39,3 +39,10 @@ textarea {
   padding-top: 10px;
   font-size: smaller;
 }
+
+#fhir-version-select {
+  margin-left: 40px;
+  margin-right: 40px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
