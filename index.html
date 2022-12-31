@@ -38,6 +38,12 @@
             </div>
         </header>
         <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title">FHIR Version</span>
+            <select class="fhir-version-select" name="fhir-version-select" id="fhir-version-select">
+                <option value="auto">Auto</option>
+                <option value="r4">R4</option>
+                <option value="stu3">STU3</option>
+            </select>
             <span class="mdl-layout-title">Examples</span>
             <nav class="mdl-navigation">
                 <a class="mdl-navigation__link" href="#" id="skeleton-patient__link">Skeleton patient</a>
@@ -45,7 +51,7 @@
                 <a class="mdl-navigation__link" href="#" id="sample-diagnosticreport__link">Sample DiagnosticReport</a>
                 <a class="mdl-navigation__link" href="#" id="json-edge-cases__link" title="A complex resource showcasing many aspects of FHIR JSON">JSON edge cases</a>
             </nav>
-        </div>
+        </div>        
 
         <main class="mdl-layout__content">
             <div class="page-content">
