@@ -1,3 +1,22 @@
+/*animated header gradient*/
+@keyframes headerGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.mdl-layout__header {
+  background: linear-gradient(-45deg, #d32f2f, #e53935, #c62828, #b71c1c, #d32f2f) !important;
+  background-size: 400% 400%;
+  animation: headerGradient 30s ease infinite;
+}
+
 /*patch the drawer hambuger to vertically-align to centre*/
 .mdl-layout__drawer-button {
   display: flex;
