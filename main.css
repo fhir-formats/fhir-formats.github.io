@@ -92,6 +92,9 @@ textarea {
   font-size: 18px;
   margin-right: 6px;
 }
+.fhir-status__icon:empty {
+  display: none;
+}
 .fhir-status__text {
   flex: 1;
 }
