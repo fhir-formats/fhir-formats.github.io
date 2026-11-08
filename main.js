@@ -55,14 +55,16 @@ function FhirInputView(el) {
   /* hides this view's error or stale note, including one still waiting to be shown */
   function clearStatus() {
     clearTimeout(errorTimer);
+    errorTimer = null;
     setStatus(null);
     setErrorLine(null);
   }
   this.clearStatus = clearStatus;
 
-  /* marks this view's content as the output of an earlier, valid input */
+  /* marks this view's content as the output of an earlier, valid input
+     (unless it's input with an error of its own, shown or about to be) */
   function showStale() {
-    if (statusKind !== "error" && codemirror.getValue() !== "") {
+    if (statusKind !== "error" && !errorTimer && codemirror.getValue() !== "") {
       setStatus("stale", { template: "Output is from your last valid input." });
     }
   }
@@ -71,9 +73,15 @@ function FhirInputView(el) {
   /* explains why this view's content didn't convert and marks the other view as stale */
   function showError(luaError) {
     var text = codemirror.getValue();
-    var problem = codemirror.getOption("mode") === "xml" ?
-      describeXmlError(text, luaError) :
-      describeJsonError(text, luaError, getFhirVersion());
+    var problem;
+    errorTimer = null;
+    try {
+      problem = codemirror.getOption("mode") === "xml" ?
+        describeXmlError(text, luaError) :
+        describeJsonError(text, luaError, getFhirVersion());
+    } catch (e) {
+      problem = { template: GENERIC_LUA_PROBLEM, details: cleanLuaError(luaError) };
+    }
     setStatus("error", problem);
     setErrorLine(problem.line);
     otherView().showStale();
@@ -180,6 +188,7 @@ function FhirInputView(el) {
   /* shows a message (e.g. an XML comment) without converting it to the other view */
   function showMessage(text) {
     clearStatus();
+    if (sourceView === self) { sourceView = null; }
     setText(text, true);
   }
   this.showMessage = showMessage;
@@ -310,7 +319,7 @@ function describeXmlError(text, luaError) {
     var agrees = chromium ? chromium[2] === open && chromium[1] === close :
                  libxml2 ? libxml2[1] === open && libxml2[2] === close :
                  firefox && firefox[1] === open;
-    if (open && (close ? agrees : /still inside the root element|Premature end of data/.test(reason))) {
+    if (open && (close ? agrees : /still inside the root element|Premature end of data|no element found/.test(reason))) {
       problem.line = lineAt(text, unclosed.open.index);
       problem.template = "`<$1>` is opened but never closed" +
         (close ? " (line $2 has `</$3>` where `</$1>` was expected)." : ".");
@@ -376,7 +385,7 @@ function jsonTokenPosition(text, message) {
   var m = /^Unexpected token '([\s\S]+?)', (\.\.\.)?"([\s\S]*)"(\.\.\.)? is not valid JSON/.exec(message);
   if (!m) { return null; }
   if (m[2]) {
-    var start = text.indexOf(m[3]);
+    var start = m[4] ? text.indexOf(m[3]) : text.length - m[3].length;
     return start < 0 ? null : start + 10;
   }
   if (m[4]) { return m[3].length - 10; }
@@ -405,8 +414,9 @@ function describeJsonError(text, luaError, fhirVersion) {
   if (typeof data.resourceType !== "string") {
     return { line: resourceTypeLine, template: "`\"resourceType\"` must be text, like `\"resourceType\": \"Patient\"`.", details: details };
   }
-  /* does the converter know this resource type at all? */
-  if (!runLuaSafe("in_fhir_xml", JSON.stringify({ resourceType: data.resourceType, id: "x" }), fhirVersion).ok) {
+  /* does the converter know this resource type at all? (checked against one it surely knows) */
+  if (runLuaSafe("in_fhir_xml", '{"resourceType": "Patient", "id": "x"}', fhirVersion).ok &&
+      !runLuaSafe("in_fhir_xml", JSON.stringify({ resourceType: data.resourceType, id: "x" }), fhirVersion).ok) {
     return {
       line: resourceTypeLine,
       template: "the converter doesn't recognise `\"resourceType\": $1` (FHIR version: $2). Check the spelling and capitalisation, or choose another FHIR version from the ☰ menu.",
@@ -520,7 +530,7 @@ function describeJsonSyntaxError(text, message) {
 
 var leftFhirView = new FhirInputView(document.getElementById('fhir-input-left'));
 var rightFhirView = new FhirInputView(document.getElementById('fhir-input-right'));
-/* the view whose content was last converted into the other one */
+/* the view whose content was last converted into the other one (null while it shows a message) */
 var sourceView = leftFhirView;
 
 /* converts an example JSON resource to XML and shows it in the left view */
@@ -553,7 +563,7 @@ document.getElementById('json-edge-cases__link').onclick = function () {
 
 document.getElementById("fhir-version-select").addEventListener("change", function() {
   // refresh views for the newly selected version
-  if (sourceView.codemirror.getValue() !== "") {
+  if (sourceView && sourceView.codemirror.getValue() !== "") {
     sourceView.convertData(true);
   }
 });
