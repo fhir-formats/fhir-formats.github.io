@@ -144,7 +144,7 @@
 
             <h5>Gotchas</h5>
             <p>When converting numbers, up to 14 significant digits are supported.</p>
-            <p>If your XML or JSON is invalid, no conversion occurs but no errors are shown either.</p>
+            <p>If your XML or JSON is invalid, the other panel keeps its last output. Once you pause typing, that output is faded and a message under the panel you're editing says what's wrong, with the line number (and the line highlighted) when it can be found.</p>
             <p>Comments in XML or FHIR comments in JSON will not cause issues, but they will not be converted either.</p>
             <p>Trailing zeros in decimals are not currently preserved (<a href="https://github.com/vadi2/fhir-formats/issues/3">will be fixed</a>).</p>
             <h5>Contact</h5>
@@ -181,10 +181,7 @@
             // don't set default scripts if we need to load a resource
             if (needToLoadResource()) {
                 let resourceURL = getResourceParam();
-                leftFhirView.pauseUpdates();
-                leftFhirView.codemirror.setValue("<!--\n\n  Loading resource from "+resourceURL+"... \n\n-->");
-                leftFhirView.unpauseUpdates();
-                leftFhirView.setRenderingMode("xml");
+                leftFhirView.showMessage(xmlComment("Loading resource from " + resourceURL + "..."));
 
                 return;
             }
