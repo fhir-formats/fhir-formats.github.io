@@ -44,7 +44,6 @@ function FhirInputView(el) {
     status.firstChild.textContent = { error: "error_outline", stale: "history" }[kind] || "";
     renderMessage(statusText, problem);
     statusDetails.hidden = !problem.details;
-    statusDetails.open = false;
     statusDetails.lastChild.textContent = problem.details || "";
   }
 
@@ -111,6 +110,7 @@ function FhirInputView(el) {
       return;
     }
     oldValue = text;
+    if (statusKind === "stale") { setStatus(null); }
 
     if (text === "") {
       clearOtherView();
@@ -255,21 +255,23 @@ function cleanLuaError(error) {
 
 var GENERIC_LUA_PROBLEM = "couldn't convert this resource. The converter's own message is under Details.";
 
-/* browser XML parser messages (Chromium, then Firefox) and what they mean */
+/* browser XML parser messages (current Chromium, libxml2 in Safari and older
+   Chromium, Firefox) and what they mean */
 var XML_PARSER_MESSAGES = [
   [/Unexpected closing tag: (?:\{[^}]*\})?(\S+) != (?:\{[^}]*\})?(\S+)/, "`<$2>` needs a closing `</$2>` before `</$1>`."],
+  [/Opening and ending tag mismatch: (\S+) line \d+ and (\S+)/, "`<$1>` needs a closing `</$1>` before `</$2>`."],
   [/mismatched tag\. Expected: <\/([^>\s]+)>/, "expected the closing tag `</$1>` here."],
-  [/still inside the root element/, "the XML ends while some elements are still open."],
+  [/still inside the root element|Premature end of data/, "the XML ends while some elements are still open."],
   [/no root element found|no element found/, "no XML element found."],
   [/Unexpected end of stream$/, "the XML ends unexpectedly."],
-  [/Attribute '([^']+)' is redefined/, "the `$1` attribute appears twice in the same element."],
+  [/Attribute '?([^'\s]+)'? (?:is )?redefined/, "the `$1` attribute appears twice in the same element."],
   [/duplicate attribute/, "the same attribute appears twice in one element."],
-  [/'<' is not allowed in attributes/, "`<` isn't allowed in an attribute value; write it as `&lt;`."],
-  [/Unexpected token inside entity/, "an `&` that doesn't start an entity must be written as `&amp;`."],
-  [/Unexpected entity: (\S+)/, "`&$1;` isn't defined in XML. Use `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&apos;` or a number like `&#160;`."],
-  [/Invalid processing instruction: <\?xml/, "`<?xml ...?>` must come first, before any spaces, comments or elements."],
-  [/Unexpected token '--'/, "`--` isn't allowed inside an XML comment."],
-  [/outside the root element|junk after document element/, "there's content outside the root element."]
+  [/'<' (?:is )?not allowed in attributes/, "`<` isn't allowed in an attribute value; write it as `&lt;`."],
+  [/Unexpected token inside entity|xmlParseEntityRef: no name|EntityRef: expecting ';'/, "an `&` that doesn't start an entity must be written as `&amp;`."],
+  [/Unexpected entity: (\S+)|Entity '([^']+)' not defined/, "`&$1$2;` isn't defined in XML. Use `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&apos;` or a number like `&#160;`."],
+  [/Invalid processing instruction: <\?xml|XML declaration allowed only at the start/, "`<?xml ...?>` must come first, before any spaces, comments or elements."],
+  [/Unexpected token '--'|Double hyphen within comment/, "`--` isn't allowed inside an XML comment."],
+  [/outside the root element|junk after document element|Extra content at the end of the document/, "there's content outside the root element."]
 ];
 
 /* works out a plain-language {line, template, args, details} for XML that didn't convert */
@@ -293,7 +295,7 @@ function describeXmlError(text, luaError) {
       var m = entry[0].exec(reason);
       if (m) {
         problem.template = entry[1];
-        problem.args = m.slice(1);
+        problem.args = m.slice(1).map(function(arg) { return arg || ""; });
       }
       return m;
     });
@@ -303,9 +305,12 @@ function describeXmlError(text, luaError) {
     var unclosed = findUnclosedTag(text);
     var open = unclosed.open && unclosed.open[2], close = unclosed.close && unclosed.close[2];
     var chromium = /closing tag: (?:\{[^}]*\})?(\S+) != (?:\{[^}]*\})?(\S+)/.exec(reason); // found, expected
-    var firefox = /Expected: <\/([^>\s]+)>/.exec(reason);
-    if (open && (close ? (chromium ? chromium[2] === open && chromium[1] === close : firefox && firefox[1] === open) :
-                         /still inside the root element/.test(reason))) {
+    var libxml2 = /tag mismatch: (\S+) line \d+ and (\S+)/.exec(reason); // expected, found
+    var firefox = /Expected: <\/([^>\s]+)>/.exec(reason); // expected
+    var agrees = chromium ? chromium[2] === open && chromium[1] === close :
+                 libxml2 ? libxml2[1] === open && libxml2[2] === close :
+                 firefox && firefox[1] === open;
+    if (open && (close ? agrees : /still inside the root element|Premature end of data/.test(reason))) {
       problem.line = lineAt(text, unclosed.open.index);
       problem.template = "`<$1>` is opened but never closed" +
         (close ? " (line $2 has `</$3>` where `</$1>` was expected)." : ".");
@@ -435,7 +440,11 @@ function findBadDiv(data) {
 
 function describeJsonSyntaxError(text, message) {
   var position = /position (\d+)/.exec(message);
-  position = position ? +position[1] : /Unexpected end of JSON input/.test(message) ? text.length : jsonTokenPosition(text, message);
+  var lineColumn = /line (\d+) column (\d+)/.exec(message);
+  position = position ? +position[1] :
+    /Unexpected end of (JSON input|data)|end of data/i.test(message) ? text.length :
+    lineColumn ? text.split("\n").slice(0, lineColumn[1] - 1).join("\n").length + (lineColumn[1] > 1) + (lineColumn[2] - 1) :
+    jsonTokenPosition(text, message);
   var problem = { template: "this isn't valid JSON.", args: [], details: message };
   if (position == null) { return problem; }
 
@@ -457,31 +466,31 @@ function describeJsonSyntaxError(text, message) {
     return problem;
   }
 
-  if (/Unterminated string/.test(message)) {
+  if (/Unterminated string/i.test(message)) {
     return say("this text isn't closed with a `\"`.");
   }
   if (position >= end) {
     return say("the JSON ends before every `{` and `[` is closed.", [], lineAt(text, end - 1));
   }
-  if (/Bad control character/.test(message)) {
+  if (/Bad control character/i.test(message)) {
     return at === "\n" || at === "\r" ?
       say("this text isn't closed with a `\"` before the line ends.") :
       say("text can't contain tabs or other control characters; write a tab as `\\t`.");
   }
-  if (/Expected ',' or '([}\]])'/.test(message)) {
+  if (/Expected ',' or '([}\]])'/i.test(message)) {
     return /["{\[\w-]/.test(at) ?
       say("missing comma after `$1`.", [excerpt(lineBefore)], prevLine) :
-      say("expected `,` or `$1` here.", [/Expected ',' or '([}\]])'/.exec(message)[1]]);
+      say("expected `,` or `$1` here.", [/Expected ',' or '([}\]])'/i.exec(message)[1]]);
   }
-  if (/Expected ':' after property name/.test(message) && key) {
+  if (/Expected ':' after property name/i.test(message) && key) {
     return say("missing `:` after `$1`.", [excerpt(key[1])]);
   }
-  if (/Unexpected non-whitespace character after JSON/.test(message)) {
+  if (/Unexpected non-whitespace character after JSON/i.test(message)) {
     return at === "}" || at === "]" ?
       say("extra `$1` after the end of the JSON.", [at]) :
       say("there's more text after the end of the JSON.");
   }
-  if (/Bad escaped character/.test(message)) {
+  if (/Bad escaped character/i.test(message)) {
     var backslash = text.lastIndexOf("\\", position);
     return say("`$1` isn't a valid escape in JSON text.", [text.substr(backslash, 2)]);
   }
@@ -494,10 +503,10 @@ function describeJsonSyntaxError(text, message) {
   if (at === "/") {
     return say("JSON doesn't allow comments.");
   }
-  if (/property name/.test(message) && /[A-Za-z_$]/.test(at)) {
+  if (/property name/i.test(message) && /[A-Za-z_$]/.test(at)) {
     return say("property names need double quotes, like `\"$1\"`.", [word]);
   }
-  if (/Unexpected token/.test(message)) {
+  if (/Unexpected (token|character|keyword)/i.test(message)) {
     if (word && !/^(true|false|null)$/.test(word)) {
       return say("`$1` isn't valid JSON. Text needs double quotes, and the only bare words allowed are `true`, `false` and `null`.", [excerpt(word)]);
     }
