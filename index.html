@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
 
 <head>
@@ -11,12 +12,12 @@
     <!-- Material Design icon font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <!-- CodeMirror -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.min.css"></link>
-    <link rel="stylesheet" href="main.css"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.min.css">
+    <link rel="stylesheet" href="main.css">
 
     <!-- dialog polyfill requires js and css in header -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.3/dialog-polyfill.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.3/dialog-polyfill.min.css"></link>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.3/dialog-polyfill.min.css">
 </head>
 
 <body>
@@ -149,7 +150,7 @@
             <h5>Contact</h5>
             <p>Like this? Have feedback? <a href="https://www.linkedin.com/in/vadimperetokin/">Get in touch</a> or <a href="https://github.com/fhir-formats/fhir-formats.github.io/issues/new">submit a request</a> on Github.</p>
             <h5>Consulting</h5>
-            <p>Looking add a FHIR consultant to your project? I'm <a href="https://www.linkedin.com/in/vadimperetokin/">available</a>.</p>
+            <p>Looking to add a FHIR consultant to your project? I'm <a href="https://www.linkedin.com/in/vadimperetokin/">available</a>.</p>
 
         </div>
         <div class="mdl-dialog__actions">
@@ -189,14 +190,13 @@
             }
 
             /* set default text to show something */
-            var xml = "<!-- Select the \u2630 top-left to pick FHIR version or to load more examples. Typing here will update the JSON in real-time and vice-versa -->\r\n\r\n<Patient xmlns=\'http:\/\/hl7.org\/fhir\'>\r\n  <id value=\'examle\'\/>\r\n  <active value=\'true\'\/>\r\n  <name>\r\n    <use value=\'official\'\/>\r\n    <family value=\'Chalmers\'\/>\r\n    <given value=\'Peter\'\/>\r\n    <given value=\'James\'\/>\r\n  <\/name>\r\n  <name>\r\n    <use value=\'usual\'\/>\r\n    <given value=\'Jim\'\/>\r\n  <\/name>\r\n  <telecom>\r\n    <system value=\'phone\'\/>\r\n    <value value=\'(03) 3410 5613\'\/>\r\n    <use value=\'mobile\'\/>\r\n    <rank value=\'2\'\/>\r\n  <\/telecom>\r\n  <gender value=\'male\'\/>\r\n  <birthDate value=\'1974-12-25\'>\r\n    <extension url=\'http:\/\/hl7.org\/fhir\/StructureDefinition\/patient-birthTime\'>\r\n      <valueDateTime value=\'1974-12-25T14:35:45-05:00\'\/>\r\n    <\/extension>\r\n  <\/birthDate>\r\n  <deceasedBoolean value=\'false\'\/>\r\n  <address>\r\n    <use value=\'home\'\/>\r\n    <type value=\'both\'\/>\r\n    <text value=\'534 Erewhon St PeasantVille, Rainbow, Vic  3999\'\/>\r\n    <line value=\'534 Erewhon St\'\/>\r\n    <city value=\'PleasantVille\'\/>\r\n    <district value=\'Rainbow\'\/>\r\n    <state value=\'Vic\'\/>\r\n    <postalCode value=\'3999\'\/>\r\n    <period>\r\n      <start value=\'1974-12-25\'\/>\r\n    <\/period>\r\n  <\/address>\r\n<\/Patient>";
-            var json = "{\r\n  \"gender\": \"male\",\r\n  \"active\": true,\r\n  \"_birthDate\": {\r\n    \"extension\": [\r\n      {\r\n        \"valueDateTime\": \"1974-12-25T14:35:45-05:00\",\r\n        \"url\": \"http:\/\/hl7.org\/fhir\/StructureDefinition\/patient-birthTime\"\r\n      }\r\n    ]\r\n  },\r\n  \"resourceType\": \"Patient\",\r\n  \"telecom\": [\r\n    {\r\n      \"rank\": 2,\r\n      \"system\": \"phone\",\r\n      \"value\": \"(03) 3410 5613\",\r\n      \"use\": \"mobile\"\r\n    }\r\n  ],\r\n  \"id\": \"examle\",\r\n  \"birthDate\": \"1974-12-25\",\r\n  \"address\": [\r\n    {\r\n      \"city\": \"PleasantVille\",\r\n      \"period\": {\r\n        \"start\": \"1974-12-25\"\r\n      },\r\n      \"line\": [\r\n        \"534 Erewhon St\"\r\n      ],\r\n      \"type\": \"both\",\r\n      \"postalCode\": \"3999\",\r\n      \"text\": \"534 Erewhon St PeasantVille, Rainbow, Vic  3999\",\r\n      \"state\": \"Vic\",\r\n      \"district\": \"Rainbow\",\r\n      \"use\": \"home\"\r\n    }\r\n  ],\r\n  \"name\": [\r\n    {\r\n      \"use\": \"official\",\r\n      \"given\": [\r\n        \"Peter\",\r\n        \"James\"\r\n      ],\r\n      \"family\": \"Chalmers\"\r\n    },\r\n    {\r\n      \"given\": [\r\n        \"Jim\"\r\n      ],\r\n      \"use\": \"usual\"\r\n    }\r\n  ],\r\n  \"deceasedBoolean\": false\r\n}";
+            var xml = "<!-- Select the \u2630 top-left to pick FHIR version or to load more examples. Typing here will update the JSON in real-time and vice-versa -->\r\n\r\n<Patient xmlns=\'http:\/\/hl7.org\/fhir\'>\r\n  <id value=\'example\'\/>\r\n  <active value=\'true\'\/>\r\n  <name>\r\n    <use value=\'official\'\/>\r\n    <family value=\'Chalmers\'\/>\r\n    <given value=\'Peter\'\/>\r\n    <given value=\'James\'\/>\r\n  <\/name>\r\n  <name>\r\n    <use value=\'usual\'\/>\r\n    <given value=\'Jim\'\/>\r\n  <\/name>\r\n  <telecom>\r\n    <system value=\'phone\'\/>\r\n    <value value=\'(03) 3410 5613\'\/>\r\n    <use value=\'mobile\'\/>\r\n    <rank value=\'2\'\/>\r\n  <\/telecom>\r\n  <gender value=\'male\'\/>\r\n  <birthDate value=\'1974-12-25\'>\r\n    <extension url=\'http:\/\/hl7.org\/fhir\/StructureDefinition\/patient-birthTime\'>\r\n      <valueDateTime value=\'1974-12-25T14:35:45-05:00\'\/>\r\n    <\/extension>\r\n  <\/birthDate>\r\n  <deceasedBoolean value=\'false\'\/>\r\n  <address>\r\n    <use value=\'home\'\/>\r\n    <type value=\'both\'\/>\r\n    <text value=\'534 Erewhon St PeasantVille, Rainbow, Vic  3999\'\/>\r\n    <line value=\'534 Erewhon St\'\/>\r\n    <city value=\'PleasantVille\'\/>\r\n    <district value=\'Rainbow\'\/>\r\n    <state value=\'Vic\'\/>\r\n    <postalCode value=\'3999\'\/>\r\n    <period>\r\n      <start value=\'1974-12-25\'\/>\r\n    <\/period>\r\n  <\/address>\r\n<\/Patient>";
             leftFhirView.pauseUpdates();
             leftFhirView.codemirror.setValue(xml);
             leftFhirView.unpauseUpdates();
             leftFhirView.setRenderingMode("xml");
 
-            var json = "{\r\n  \"active\": true,\r\n  \"deceasedBoolean\": false,\r\n  \"gender\": \"male\",\r\n  \"address\": [\r\n    {\r\n      \"use\": \"home\",\r\n      \"period\": {\r\n        \"start\": \"1974-12-25\"\r\n      },\r\n      \"postalCode\": \"3999\",\r\n      \"type\": \"both\",\r\n      \"district\": \"Rainbow\",\r\n      \"line\": [\r\n        \"534 Erewhon St\"\r\n      ],\r\n      \"text\": \"534 Erewhon St PeasantVille, Rainbow, Vic  3999\",\r\n      \"state\": \"Vic\",\r\n      \"city\": \"PleasantVille\"\r\n    }\r\n  ],\r\n  \"id\": \"examle\",\r\n  \"name\": [\r\n    {\r\n      \"use\": \"official\",\r\n      \"family\": \"Chalmers\",\r\n      \"given\": [\r\n        \"Peter\",\r\n        \"James\"\r\n      ]\r\n    },\r\n    {\r\n      \"given\": [\r\n        \"Jim\"\r\n      ],\r\n      \"use\": \"usual\"\r\n    }\r\n  ],\r\n  \"_birthDate\": {\r\n    \"extension\": [\r\n      {\r\n        \"url\": \"http:\/\/hl7.org\/fhir\/StructureDefinition\/patient-birthTime\",\r\n        \"valueDateTime\": \"1974-12-25T14:35:45-05:00\"\r\n      }\r\n    ]\r\n  },\r\n  \"resourceType\": \"Patient\",\r\n  \"telecom\": [\r\n    {\r\n      \"rank\": 2,\r\n      \"value\": \"(03) 3410 5613\",\r\n      \"system\": \"phone\",\r\n      \"use\": \"mobile\"\r\n    }\r\n  ],\r\n  \"birthDate\": \"1974-12-25\"\r\n}";
+            var json = "{\r\n  \"active\": true,\r\n  \"deceasedBoolean\": false,\r\n  \"gender\": \"male\",\r\n  \"address\": [\r\n    {\r\n      \"use\": \"home\",\r\n      \"period\": {\r\n        \"start\": \"1974-12-25\"\r\n      },\r\n      \"postalCode\": \"3999\",\r\n      \"type\": \"both\",\r\n      \"district\": \"Rainbow\",\r\n      \"line\": [\r\n        \"534 Erewhon St\"\r\n      ],\r\n      \"text\": \"534 Erewhon St PeasantVille, Rainbow, Vic  3999\",\r\n      \"state\": \"Vic\",\r\n      \"city\": \"PleasantVille\"\r\n    }\r\n  ],\r\n  \"id\": \"example\",\r\n  \"name\": [\r\n    {\r\n      \"use\": \"official\",\r\n      \"family\": \"Chalmers\",\r\n      \"given\": [\r\n        \"Peter\",\r\n        \"James\"\r\n      ]\r\n    },\r\n    {\r\n      \"given\": [\r\n        \"Jim\"\r\n      ],\r\n      \"use\": \"usual\"\r\n    }\r\n  ],\r\n  \"_birthDate\": {\r\n    \"extension\": [\r\n      {\r\n        \"url\": \"http:\/\/hl7.org\/fhir\/StructureDefinition\/patient-birthTime\",\r\n        \"valueDateTime\": \"1974-12-25T14:35:45-05:00\"\r\n      }\r\n    ]\r\n  },\r\n  \"resourceType\": \"Patient\",\r\n  \"telecom\": [\r\n    {\r\n      \"rank\": 2,\r\n      \"value\": \"(03) 3410 5613\",\r\n      \"system\": \"phone\",\r\n      \"use\": \"mobile\"\r\n    }\r\n  ],\r\n  \"birthDate\": \"1974-12-25\"\r\n}";
             rightFhirView.pauseUpdates();
             rightFhirView.codemirror.setValue(json);
             rightFhirView.unpauseUpdates();
