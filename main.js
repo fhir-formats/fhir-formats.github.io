@@ -189,12 +189,15 @@ linkToDialog('#privacy-and-terms-dialog', '#privacy-and-terms');
 linkToDialog('#help-dialog', '#help');
 
 
+/* wraps text in an XML comment; "--" isn't allowed inside one, so split any run of hyphens */
+function xmlComment(text) {
+  return "<!--\n\n  " + text.replace(/-(?=-)/g, "- ") + "\n\n-->";
+}
+
 /* replaces the left view's "Loading resource..." message with a failure note */
 function showResourceLoadError(resourceURL, reason) {
   console.warn("Failed to load resource from " + resourceURL + ": " + reason);
-  // "--" isn't allowed inside an XML comment
-  var text = ("Couldn't load resource from " + resourceURL + ": " + reason).replace(/--/g, "- -");
-  leftFhirView.showMessage("<!--\n\n  " + text + "\n\n-->");
+  leftFhirView.showMessage(xmlComment("Couldn't load resource from " + resourceURL + ": " + reason));
 }
 
 function downloadResource(resourceURL) {
@@ -233,8 +236,8 @@ function downloadResource(resourceURL) {
 
     rightFhirView.showMessage(JSON.stringify(jsonResource, null, 2));
     if (!rightFhirView.convertData().ok) {
-      leftFhirView.showMessage("<!--\n\n  Loaded resource from " + resourceURL.replace(/--/g, "- -") +
-        ", but couldn't convert it to XML (see the browser console for details).\n\n-->");
+      leftFhirView.showMessage(xmlComment("Loaded resource from " + resourceURL +
+        ", but couldn't convert it to XML (see the browser console for details)."));
     }
   };
 
